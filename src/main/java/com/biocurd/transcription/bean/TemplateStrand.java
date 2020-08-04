@@ -1,6 +1,8 @@
 package com.biocurd.transcription.bean;
 
 /**
+ * 模版链
+ *
  * @author denmou
  * @date 2020/8/2 23:52
  */
@@ -10,9 +12,9 @@ public class TemplateStrand {
     private final String template;
 
     public TemplateStrand(String template) {
-        this.index = 0;
+        this.index = -1;
         this.template = template;
-        this.length = template.length();
+        this.length = template.length() - 1;
     }
 
     public boolean hasNext() {

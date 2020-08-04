@@ -6,7 +6,6 @@
 
     <groupId>com.biocurd</groupId>
     <artifactId>transcription</artifactId>
-    <packaging>jar</packaging>
     <version>1.0</version>
 
     <build>

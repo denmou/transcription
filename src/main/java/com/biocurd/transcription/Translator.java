@@ -144,7 +144,12 @@ public class Translator {
                     }
                     try {
                         Method method = polymerase.getClass().getMethod(methodName, classes);
-                        activeStack.push(method.invoke(polymerase, params));
+                        Object value = method.invoke(polymerase, params);
+                        if (value instanceof String) {
+                            activeStack.push(execute(value.toString()));
+                        } else {
+                            activeStack.push(value);
+                        }
                     } catch (NoSuchMethodException e) {
                         throw new ExpressException("方法[" + methodName + "]在酶[" + polymeraseName + "]中不存在");
                     } catch (IllegalAccessException | InvocationTargetException e) {

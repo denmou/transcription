@@ -29,12 +29,16 @@ public class Translator {
      */
     public Translator(Object... polymerases) {
         this.polymerases = new HashMap<>(8);
+        this.functions = new ArrayFunctions();
+        this.addPolymerase(polymerases);
+    }
+
+    public void addPolymerase(Object... polymerases) {
         for (Object polymerase : polymerases) {
             Class<?> clazz = polymerase.getClass();
             Polymerase annotation = clazz.getAnnotation(Polymerase.class);
             this.polymerases.put(annotation != null ? annotation.name() : clazz.getSimpleName(), polymerase);
         }
-        functions = new ArrayFunctions();
     }
 
     /**

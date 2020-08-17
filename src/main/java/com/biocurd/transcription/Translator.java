@@ -35,9 +35,11 @@ public class Translator {
 
     public void addPolymerase(Object... polymerases) {
         for (Object polymerase : polymerases) {
-            Class<?> clazz = polymerase.getClass();
-            Polymerase annotation = clazz.getAnnotation(Polymerase.class);
-            this.polymerases.put(annotation != null ? annotation.name() : clazz.getSimpleName(), polymerase);
+            if (polymerase != null) {
+                Class<?> clazz = polymerase.getClass();
+                Polymerase annotation = clazz.getAnnotation(Polymerase.class);
+                this.polymerases.put(annotation != null ? annotation.name() : clazz.getSimpleName(), polymerase);
+            }
         }
     }
 

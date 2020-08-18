@@ -105,7 +105,7 @@ public class Translator {
                 case Separator.PARAM_NEXT:
                     if (isArray) {
                         count++;
-                        activeStack.add(sequence.dataPop());
+                        activeStack.push(sequence.dataPop());
                     }
                     break;
                 case Separator.ARRAY_START:
@@ -122,6 +122,7 @@ public class Translator {
                         }
                         array = function.apply(array);
                     }
+                    activeStack.push(array.getClass());
                     activeStack.push(array);
                     count = countStack.pop() + 1;
                     break;
@@ -133,14 +134,16 @@ public class Translator {
                     break;
                 case Separator.PARAM_VALUE:
                     count++;
-                    activeStack.push(sequence.getParam());
+                    Object param = sequence.getParam();
+                    activeStack.push(param.getClass());
+                    activeStack.push(param);
                     break;
                 case Separator.METHOD:
                     Object[] params = new Object[count];
                     Class<?>[] classes = new Class[count];
                     for (int i = 0; i < count; i++) {
                         params[i] = activeStack.pop();
-                        classes[i] = params[i].getClass();
+                        classes[i] = (Class<?>) activeStack.pop();
                     }
                     String methodName = sequence.dataPop();
                     String polymeraseName = sequence.dataPop();
@@ -151,8 +154,10 @@ public class Translator {
                     try {
                         Method method = polymerase.getClass().getMethod(methodName, classes);
                         Object value = method.invoke(polymerase, params);
+                        activeStack.push(method.getReturnType());
                         if (value instanceof String) {
-                            activeStack.push(execute(value.toString()));
+                            Object obj = execute(value.toString());
+                            activeStack.push(obj);
                         } else {
                             activeStack.push(value);
                         }

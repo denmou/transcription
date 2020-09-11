@@ -33,6 +33,10 @@ public class Translator {
         this.addPolymerase(polymerases);
     }
 
+    public void addPolymerase(String name, Object polymerase) {
+        this.polymerases.put(name, polymerase);
+    }
+
     public void addPolymerase(Object... polymerases) {
         for (Object polymerase : polymerases) {
             if (polymerase != null) {

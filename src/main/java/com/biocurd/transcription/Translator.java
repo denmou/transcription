@@ -156,17 +156,31 @@ public class Translator {
                         throw new ExpressException("根据[酶名称: " + polymeraseName + "]在酶列表中未能找到对应酶对象");
                     }
                     try {
-                        Method method = polymerase.getClass().getMethod(methodName, classes);
-                        Object value = method.invoke(polymerase, params);
-                        activeStack.push(method.getReturnType());
+                        Method targetMethod = null;
+                        Method[] methods = polymerase.getClass().getMethods();
+                        for (Method method : methods) {
+                            if (method.getName().equals(methodName)) {
+                                Class<?>[] methodTypes = method.getParameterTypes();
+                                if (methodTypes.length == classes.length) {
+                                    if (equals(methodTypes, classes)) {
+                                        targetMethod = method;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (targetMethod == null) {
+                            throw new ExpressException("方法[" + methodName + "]在酶[" + polymeraseName
+                                    + "]中未匹配到相同参数类型方法");
+                        }
+                        Object value = targetMethod.invoke(polymerase, params);
+                        activeStack.push(targetMethod.getReturnType());
                         if (value instanceof String) {
                             Object obj = execute(value.toString());
                             activeStack.push(obj);
                         } else {
                             activeStack.push(value);
                         }
-                    } catch (NoSuchMethodException e) {
-                        throw new ExpressException("方法[" + methodName + "]在酶[" + polymeraseName + "]中不存在");
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new ExpressException("方法[" + methodName + "]在酶[" + polymeraseName + "]中执行报错", e);
                     }
@@ -177,5 +191,17 @@ public class Translator {
             }
         }
         return activeStack.pop().toString();
+    }
+
+    private boolean equals(Class<?>[] source, Class<?>[] target) {
+        if (source.length != target.length) {
+            return false;
+        }
+        for (int i = 0; i < source.length; i++) {
+            if (!source[i].isAssignableFrom(target[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

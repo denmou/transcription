@@ -33,7 +33,7 @@ public class Translator {
         this.addPolymerase(polymerases);
     }
 
-    public void addPolymerase(String name, Object polymerase) {
+    public void addPolymeraseByName(String name, Object polymerase) {
         this.polymerases.put(name, polymerase);
     }
 
